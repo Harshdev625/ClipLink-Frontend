@@ -1,15 +1,27 @@
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
-import { useSelector } from 'react-redux'
-import LoginPage from './pages/LoginPage'
-import Dashboard from './pages/Dashboard'
-import CreateLinkPage from './pages/CreateLinkPage'
-import ViewLinkStats from './pages/ViewLinkStats'
-import NotFound from './pages/NotFound'
-import Navbar from './components/Navbar'
-import ProtectedRoute from './components/ProtectedRoute'
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { useEffect } from 'react';
+import { hydrate } from './features/auth/authSlice';
+
+import LoginPage from './pages/LoginPage';
+import Dashboard from './pages/Dashboard';
+import CreateLinkPage from './pages/CreateLinkPage';
+import ViewLinkStats from './pages/ViewLinkStats';
+import NotFound from './pages/NotFound';
+import Navbar from './components/Navbar';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
-  const { user } = useSelector((state) => state.auth)
+  const dispatch = useDispatch();
+  const { user, isHydrated } = useSelector((state) => state.auth);
+
+  // Hydrate from localStorage on initial load
+  useEffect(() => {
+    dispatch(hydrate());
+  }, [dispatch]);
+
+  // Wait until hydration is done
+  if (!isHydrated) return null; // Or a loader if you'd like
 
   return (
     <Router>
@@ -43,7 +55,7 @@ function App() {
         <Route path='*' element={<NotFound />} />
       </Routes>
     </Router>
-  )
+  );
 }
 
-export default App
+export default App;

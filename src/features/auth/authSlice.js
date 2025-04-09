@@ -1,13 +1,16 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { login } from "./authAPI";
 
+// Initial state with hydration flag
 const initialState = {
-  user: JSON.parse(localStorage.getItem("user")) || null,
-  token: localStorage.getItem("token") || null,
+  user: null,
+  token: null,
   loading: false,
   error: null,
+  isHydrated: false,
 };
 
+// Thunk to handle login
 export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password }, { rejectWithValue }) => {
@@ -29,8 +32,16 @@ const authSlice = createSlice({
     logout(state) {
       state.user = null;
       state.token = null;
+      state.isHydrated = true;
       localStorage.removeItem("token");
       localStorage.removeItem("user");
+    },
+    hydrate(state) {
+      const token = localStorage.getItem("token");
+      const user = localStorage.getItem("user");
+      state.token = token || null;
+      state.user = user ? JSON.parse(user) : null;
+      state.isHydrated = true;
     },
   },
   extraReducers: (builder) => {
@@ -43,13 +54,15 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
+        state.isHydrated = true;
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload;
+        state.isHydrated = true;
       });
   },
 });
 
-export const { logout } = authSlice.actions;
+export const { logout, hydrate } = authSlice.actions;
 export default authSlice.reducer;

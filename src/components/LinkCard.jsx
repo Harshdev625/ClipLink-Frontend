@@ -8,7 +8,10 @@ const BASE_URL = import.meta.env.VITE_SHORT_LINK_DOMAIN
 const LinkCard = ({ link }) => {
   const [copied, setCopied] = useState(false)
   const shortUrl = `${BASE_URL}/${link.shortCode}`
-  const isExpired = new Date(link.expiresAt) < new Date()
+
+  const isExpired = link.expiresAt
+    ? new Date(link.expiresAt) < new Date()
+    : false // If no expiration, treat as not expired
 
   const handleCopy = () => {
     navigator.clipboard.writeText(shortUrl)

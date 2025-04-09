@@ -1,17 +1,17 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import { getAnalytics } from './analyticsAPI'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { getAnalytics } from './analyticsAPI';
 
 export const fetchAnalytics = createAsyncThunk(
   'analytics/fetch',
-  async (shortCode, { rejectWithValue }) => {
+  async ({ shortCode, page = 1, limit = 10 }, { rejectWithValue }) => {
     try {
-      const data = await getAnalytics(shortCode);
+      const data = await getAnalytics(shortCode, page, limit);
       return data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || 'Failed to load analytics');
     }
   }
-)
+);
 
 const analyticsSlice = createSlice({
   name: 'analytics',
