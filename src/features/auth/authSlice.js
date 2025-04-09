@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import axios from "../../services/axiosInstance";
+import { login } from "./authAPI";
 
 const initialState = {
   user: JSON.parse(localStorage.getItem("user")) || null,
@@ -12,9 +12,10 @@ export const loginUser = createAsyncThunk(
   "auth/loginUser",
   async ({ email, password }, { rejectWithValue }) => {
     try {
-      const res = await axios.post("/auth/login", { email, password });
-      localStorage.setItem("token", res.data.token);
-      return res.data;
+      const data = await login({ email, password });
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      return data;
     } catch (err) {
       return rejectWithValue(err.response?.data?.message || "Login failed");
     }
@@ -42,7 +43,6 @@ const authSlice = createSlice({
         state.loading = false;
         state.user = action.payload.user;
         state.token = action.payload.token;
-        localStorage.setItem("user", JSON.stringify(action.payload.user));
       })
       .addCase(loginUser.rejected, (state, action) => {
         state.loading = false;

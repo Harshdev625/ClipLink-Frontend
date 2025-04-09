@@ -1,14 +1,14 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-import axios from '../../services/axiosInstance'
+import { getAnalytics } from './analyticsAPI'
 
 export const fetchAnalytics = createAsyncThunk(
   'analytics/fetch',
   async (shortCode, { rejectWithValue }) => {
     try {
-      const res = await axios.get(`/analytics/${shortCode}`)
-      return res.data
+      const data = await getAnalytics(shortCode);
+      return data;
     } catch (err) {
-      return rejectWithValue(err.response?.data?.message || 'Failed to load analytics')
+      return rejectWithValue(err.response?.data?.message || 'Failed to load analytics');
     }
   }
 )
@@ -21,28 +21,28 @@ const analyticsSlice = createSlice({
     error: null,
   },
   reducers: {
-    clearAnalytics(state) {
-      state.data = null
-      state.loading = false
-      state.error = null
+    clearAnalytics: (state) => {
+      state.data = null;
+      state.loading = false;
+      state.error = null;
     },
   },
   extraReducers: (builder) => {
     builder
       .addCase(fetchAnalytics.pending, (state) => {
-        state.loading = true
-        state.error = null
+        state.loading = true;
+        state.error = null;
       })
       .addCase(fetchAnalytics.fulfilled, (state, action) => {
-        state.loading = false
-        state.data = action.payload
+        state.loading = false;
+        state.data = action.payload;
       })
       .addCase(fetchAnalytics.rejected, (state, action) => {
-        state.loading = false
-        state.error = action.payload
-      })
+        state.loading = false;
+        state.error = action.payload;
+      });
   },
-})
+});
 
-export const { clearAnalytics } = analyticsSlice.actions
-export default analyticsSlice.reducer
+export const { clearAnalytics } = analyticsSlice.actions;
+export default analyticsSlice.reducer;
