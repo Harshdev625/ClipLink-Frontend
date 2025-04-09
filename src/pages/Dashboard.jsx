@@ -1,15 +1,16 @@
-import { useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { fetchLinks } from '../features/links/linkSlice'
-import LinkCard from '../components/LinkCard'
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchLinks } from "../features/links/linkSlice";
+import LinkCard from "../components/LinkCard";
+import { Link } from 'react-router-dom' 
 
 export default function Dashboard() {
-  const dispatch = useDispatch()
-  const { links, loading } = useSelector((state) => state.links)
+  const dispatch = useDispatch();
+  const { links, loading } = useSelector((state) => state.links);
 
   useEffect(() => {
-    dispatch(fetchLinks())
-  }, [dispatch])
+    dispatch(fetchLinks());
+  }, [dispatch]);
 
   return (
     <div className="min-h-screen py-10 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-900 via-gray-900 to-black text-white">
@@ -34,12 +35,12 @@ export default function Dashboard() {
               You haven’t created any links yet.
             </p>
             <p className="mt-4">
-              <a
-                href="/create"
+              <Link
+                to="/create"
                 className="text-blue-400 hover:text-white hover:underline font-semibold"
               >
                 Create your first link →
-              </a>
+              </Link>
             </p>
           </div>
         ) : (
@@ -51,5 +52,5 @@ export default function Dashboard() {
         )}
       </div>
     </div>
-  )
+  );
 }
